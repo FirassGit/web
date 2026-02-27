@@ -159,17 +159,22 @@ nav.scrolled{background:rgba(1,8,16,0.92);border-bottom:1px solid rgba(201,168,7
 .video-loaded .video-embed-wrapper{display:block}
 .video-embed-wrapper{display:none;position:relative}
 
-/* PHOTO GALLERY */
+/* PHOTO SLOT */
 .photo-gallery{margin-top:1.2rem;border:1px solid rgba(201,168,76,0.12);border-radius:8px;overflow:hidden;background:rgba(1,8,16,0.4)}
 .photo-gallery-header{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.1rem;border-bottom:1px solid rgba(201,168,76,0.08);background:rgba(1,8,16,0.5)}
 .photo-gallery-label{font-family:'Montserrat',sans-serif;font-size:0.48rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(201,168,76,0.5)}
 .photo-upload-btn{font-family:'Montserrat',sans-serif;font-size:0.48rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(201,168,76,0.7);background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);padding:0.35rem 0.9rem;border-radius:3px;cursor:pointer;transition:all 0.3s}
 .photo-upload-btn:hover{background:rgba(201,168,76,0.12);border-color:rgba(201,168,76,0.4);color:var(--gold-light)}
-.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;min-height:80px;padding:2px}
-.photo-grid:empty::after{content:'Ajoutez des photos ci-dessus';grid-column:1/-1;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.85rem;color:rgba(245,240,232,0.2);padding:1.5rem;min-height:80px}
-.photo-thumb{aspect-ratio:4/3;object-fit:cover;width:100%;display:block;border-radius:2px;cursor:pointer;transition:opacity 0.3s,transform 0.3s}
-.photo-thumb:hover{opacity:0.8;transform:scale(1.02)}
-.photo-slot{aspect-ratio:4/3;background:rgba(201,168,76,0.03);border:1px dashed rgba(201,168,76,0.1);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:rgba(201,168,76,0.15)}
+.photo-single{position:relative;aspect-ratio:16/9;overflow:hidden;background:rgba(11,61,145,0.06);}
+.photo-single img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.5s,filter 0.4s;}
+.photo-single:hover img{transform:scale(1.03);filter:brightness(0.8);}
+.photo-single-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.6rem;pointer-events:none;}
+.photo-single-empty-line{width:30px;height:1px;background:rgba(201,168,76,0.2);}
+.photo-single-empty-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.85rem;color:rgba(245,240,232,0.15);letter-spacing:0.05em;}
+.photo-single-del{position:absolute;top:0.6rem;right:0.6rem;width:28px;height:28px;border-radius:50%;background:rgba(1,8,16,0.8);border:1px solid rgba(201,168,76,0.3);color:rgba(201,168,76,0.7);font-size:0.7rem;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;cursor:pointer;z-index:2;}
+.photo-single:hover .photo-single-del{opacity:1;}
+.photo-single-expand{position:absolute;bottom:0.6rem;right:0.6rem;width:28px;height:28px;border-radius:50%;background:rgba(1,8,16,0.7);border:1px solid rgba(201,168,76,0.2);color:rgba(201,168,76,0.6);font-size:0.7rem;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;cursor:pointer;z-index:2;}
+.photo-single:hover .photo-single-expand{opacity:1;}
 
 /* LIGHTBOX */
 .lightbox{position:fixed;inset:0;background:rgba(1,8,16,0.95);z-index:9999;display:none;align-items:center;justify-content:center;cursor:zoom-out}
@@ -316,10 +321,16 @@ section{position:relative;z-index:1}
       </div>
       <div class="photo-gallery">
         <div class="photo-gallery-header">
-          <span class="photo-gallery-label">Photos · coulisses</span>
-          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+          <span class="photo-gallery-label">Photo · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter une photo<input type="file" accept="image/*" style="display:none" onchange="addPhoto(this)"></label>
         </div>
-        <div class="photo-grid"></div>
+        <div class="photo-single">
+          <div class="photo-single-empty">
+            <div class="photo-single-empty-line"></div>
+            <span class="photo-single-empty-text">Aucune photo ajoutée</span>
+            <div class="photo-single-empty-line"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -362,10 +373,16 @@ section{position:relative;z-index:1}
       </div>
       <div class="photo-gallery">
         <div class="photo-gallery-header">
-          <span class="photo-gallery-label">Photos · coulisses</span>
-          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+          <span class="photo-gallery-label">Photo · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter une photo<input type="file" accept="image/*" style="display:none" onchange="addPhoto(this)"></label>
         </div>
-        <div class="photo-grid"></div>
+        <div class="photo-single">
+          <div class="photo-single-empty">
+            <div class="photo-single-empty-line"></div>
+            <span class="photo-single-empty-text">Aucune photo ajoutée</span>
+            <div class="photo-single-empty-line"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -408,10 +425,16 @@ section{position:relative;z-index:1}
       </div>
       <div class="photo-gallery">
         <div class="photo-gallery-header">
-          <span class="photo-gallery-label">Photos · coulisses</span>
-          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+          <span class="photo-gallery-label">Photo · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter une photo<input type="file" accept="image/*" style="display:none" onchange="addPhoto(this)"></label>
         </div>
-        <div class="photo-grid"></div>
+        <div class="photo-single">
+          <div class="photo-single-empty">
+            <div class="photo-single-empty-line"></div>
+            <span class="photo-single-empty-text">Aucune photo ajoutée</span>
+            <div class="photo-single-empty-line"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -455,10 +478,16 @@ section{position:relative;z-index:1}
       </div>
       <div class="photo-gallery">
         <div class="photo-gallery-header">
-          <span class="photo-gallery-label">Photos · coulisses</span>
-          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+          <span class="photo-gallery-label">Photo · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter une photo<input type="file" accept="image/*" style="display:none" onchange="addPhoto(this)"></label>
         </div>
-        <div class="photo-grid"></div>
+        <div class="photo-single">
+          <div class="photo-single-empty">
+            <div class="photo-single-empty-line"></div>
+            <span class="photo-single-empty-text">Aucune photo ajoutée</span>
+            <div class="photo-single-empty-line"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -501,10 +530,16 @@ section{position:relative;z-index:1}
       </div>
       <div class="photo-gallery">
         <div class="photo-gallery-header">
-          <span class="photo-gallery-label">Photos · coulisses</span>
-          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+          <span class="photo-gallery-label">Photo · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter une photo<input type="file" accept="image/*" style="display:none" onchange="addPhoto(this)"></label>
         </div>
-        <div class="photo-grid"></div>
+        <div class="photo-single">
+          <div class="photo-single-empty">
+            <div class="photo-single-empty-line"></div>
+            <span class="photo-single-empty-text">Aucune photo ajoutée</span>
+            <div class="photo-single-empty-line"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -547,10 +582,16 @@ section{position:relative;z-index:1}
       </div>
       <div class="photo-gallery">
         <div class="photo-gallery-header">
-          <span class="photo-gallery-label">Photos · coulisses</span>
-          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+          <span class="photo-gallery-label">Photo · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter une photo<input type="file" accept="image/*" style="display:none" onchange="addPhoto(this)"></label>
         </div>
-        <div class="photo-grid"></div>
+        <div class="photo-single">
+          <div class="photo-single-empty">
+            <div class="photo-single-empty-line"></div>
+            <span class="photo-single-empty-text">Aucune photo ajoutée</span>
+            <div class="photo-single-empty-line"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -593,10 +634,16 @@ section{position:relative;z-index:1}
       </div>
       <div class="photo-gallery">
         <div class="photo-gallery-header">
-          <span class="photo-gallery-label">Photos · coulisses</span>
-          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+          <span class="photo-gallery-label">Photo · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter une photo<input type="file" accept="image/*" style="display:none" onchange="addPhoto(this)"></label>
         </div>
-        <div class="photo-grid"></div>
+        <div class="photo-single">
+          <div class="photo-single-empty">
+            <div class="photo-single-empty-line"></div>
+            <span class="photo-single-empty-text">Aucune photo ajoutée</span>
+            <div class="photo-single-empty-line"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -640,10 +687,16 @@ section{position:relative;z-index:1}
       </div>
       <div class="photo-gallery">
         <div class="photo-gallery-header">
-          <span class="photo-gallery-label">Photos · coulisses</span>
-          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+          <span class="photo-gallery-label">Photo · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter une photo<input type="file" accept="image/*" style="display:none" onchange="addPhoto(this)"></label>
         </div>
-        <div class="photo-grid"></div>
+        <div class="photo-single">
+          <div class="photo-single-empty">
+            <div class="photo-single-empty-line"></div>
+            <span class="photo-single-empty-text">Aucune photo ajoutée</span>
+            <div class="photo-single-empty-line"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -686,10 +739,16 @@ section{position:relative;z-index:1}
       </div>
       <div class="photo-gallery">
         <div class="photo-gallery-header">
-          <span class="photo-gallery-label">Photos · coulisses</span>
-          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+          <span class="photo-gallery-label">Photo · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter une photo<input type="file" accept="image/*" style="display:none" onchange="addPhoto(this)"></label>
         </div>
-        <div class="photo-grid"></div>
+        <div class="photo-single">
+          <div class="photo-single-empty">
+            <div class="photo-single-empty-line"></div>
+            <span class="photo-single-empty-text">Aucune photo ajoutée</span>
+            <div class="photo-single-empty-line"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -732,10 +791,16 @@ section{position:relative;z-index:1}
       </div>
       <div class="photo-gallery">
         <div class="photo-gallery-header">
-          <span class="photo-gallery-label">Photos · coulisses</span>
-          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+          <span class="photo-gallery-label">Photo · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter une photo<input type="file" accept="image/*" style="display:none" onchange="addPhoto(this)"></label>
         </div>
-        <div class="photo-grid"></div>
+        <div class="photo-single">
+          <div class="photo-single-empty">
+            <div class="photo-single-empty-line"></div>
+            <span class="photo-single-empty-text">Aucune photo ajoutée</span>
+            <div class="photo-single-empty-line"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -778,10 +843,16 @@ section{position:relative;z-index:1}
       </div>
       <div class="photo-gallery">
         <div class="photo-gallery-header">
-          <span class="photo-gallery-label">Photos · coulisses</span>
-          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+          <span class="photo-gallery-label">Photo · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter une photo<input type="file" accept="image/*" style="display:none" onchange="addPhoto(this)"></label>
         </div>
-        <div class="photo-grid"></div>
+        <div class="photo-single">
+          <div class="photo-single-empty">
+            <div class="photo-single-empty-line"></div>
+            <span class="photo-single-empty-text">Aucune photo ajoutée</span>
+            <div class="photo-single-empty-line"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1048,22 +1119,44 @@ document.addEventListener('keydown',e=>{
   }
 });
 
-/* ── PHOTO GALLERY ── */
-function addPhotos(input){
-  const grid = input.closest('.photo-gallery').querySelector('.photo-grid');
-  Array.from(input.files).forEach(file=>{
-    const reader = new FileReader();
-    reader.onload = e=>{
-      const img = document.createElement('img');
-      img.src = e.target.result;
-      img.className = 'photo-thumb';
-      img.title = 'Cliquer pour agrandir';
-      img.addEventListener('click', ()=>openLightbox(e.target.result));
-      grid.appendChild(img);
+/* ── PHOTO SLOT ── */
+function addPhoto(input){
+  const slot=input.closest('.photo-gallery').querySelector('.photo-single');
+  const file=input.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    // Clear slot
+    slot.innerHTML='';
+    const img=document.createElement('img');
+    img.src=e.target.result;
+    img.alt='';
+    // Delete button
+    const del=document.createElement('div');
+    del.className='photo-single-del';
+    del.title='Supprimer';
+    del.innerHTML='✕';
+    del.onclick=ev=>{
+      ev.stopPropagation();
+      slot.innerHTML=`<div class="photo-single-empty">
+        <div class="photo-single-empty-line"></div>
+        <span class="photo-single-empty-text">Aucune photo ajoutée</span>
+        <div class="photo-single-empty-line"></div>
+      </div>`;
     };
-    reader.readAsDataURL(file);
-  });
-  input.value=''; // reset so same file can be re-added
+    // Expand button
+    const exp=document.createElement('div');
+    exp.className='photo-single-expand';
+    exp.title='Agrandir';
+    exp.innerHTML='&#x26F6;';
+    exp.onclick=ev=>{ev.stopPropagation();openLightbox(e.target.result);};
+    img.onclick=()=>openLightbox(e.target.result);
+    slot.appendChild(img);
+    slot.appendChild(del);
+    slot.appendChild(exp);
+  };
+  reader.readAsDataURL(file);
+  input.value='';
 }
 
 /* ── LIGHTBOX ── */
