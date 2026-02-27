@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dans les Coulisses d'un Chef-d'Œuvre — Titanic</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ocean: #0b3d91; --ocean-deep: #072060; --deep: #061a3a;
+  --midnight: #030d1f; --abyss: #010810;
+  --gold: #c9a84c; --gold-light: #e8c97e; --gold-dim: rgba(201,168,76,0.15);
+  --cream: #f5f0e8;
+  --ease-cinema: cubic-bezier(0.16,1,0.3,1);
+  --ease-heavy: cubic-bezier(0.77,0,0.175,1);
+  --ease-drift: cubic-bezier(0.25,0.46,0.45,0.94);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Cormorant Garamond',serif;background:var(--abyss);color:var(--cream);overflow-x:hidden;cursor:none}
+
+/* CURSOR */
+.cursor{position:fixed;width:8px;height:8px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:screen}
+.cursor-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(201,168,76,0.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:transform 0.35s var(--ease-drift),width 0.35s,height 0.35s,border-color 0.3s}
+
+/* GRAIN */
+.grain-overlay{position:fixed;inset:-50%;width:200%;height:200%;pointer-events:none;z-index:9000;opacity:0.025;animation:grainShift 0.08s steps(1) infinite;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px 200px}
+@keyframes grainShift{0%{transform:translate(0,0)}20%{transform:translate(-3%,-4%)}40%{transform:translate(2%,3%)}60%{transform:translate(-2%,4%)}80%{transform:translate(4%,-3%)}100%{transform:translate(0,0)}}
+
+/* VIGNETTE */
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:8999;background:radial-gradient(ellipse at center,transparent 50%,rgba(1,8,16,0.65) 100%)}
+
+/* PROGRESS */
+#progress-bar{position:fixed;top:0;left:0;height:1px;background:linear-gradient(to right,transparent,var(--gold),var(--gold-light),transparent);z-index:10000;width:0%;box-shadow:0 0 8px rgba(201,168,76,0.6)}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;justify-content:space-between;align-items:center;padding:1.4rem 4rem;transition:background 0.6s,border-color 0.6s}
+nav.scrolled{background:rgba(1,8,16,0.92);border-bottom:1px solid rgba(201,168,76,0.1);backdrop-filter:blur(12px)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:0.85rem;color:var(--gold);letter-spacing:0.25em;text-transform:uppercase;font-weight:400}
+.nav-links{display:flex;gap:3rem;list-style:none;align-items:center}
+.nav-links a{font-family:'Montserrat',sans-serif;font-size:0.58rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(245,240,232,0.4);text-decoration:none;transition:color 0.4s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--gold);transition:width 0.4s var(--ease-cinema)}
+.nav-links a:hover{color:var(--gold)}.nav-links a:hover::after{width:100%}
+.nav-chapter{font-family:'Montserrat',sans-serif;font-size:0.5rem;letter-spacing:0.4em;text-transform:uppercase;color:rgba(201,168,76,0.45);min-width:180px;text-align:right}
+
+/* ═══ HERO ═══ */
+.hero{position:relative;height:100vh;min-height:700px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.hero-layer{position:absolute;inset:0;will-change:transform}
+.hero-layer-stars{background-image:radial-gradient(1px 1px at 15% 20%,rgba(255,255,255,0.8),transparent),radial-gradient(1px 1px at 35% 8%,rgba(255,255,255,0.6),transparent),radial-gradient(1.5px 1.5px at 55% 15%,rgba(255,255,255,0.9),transparent),radial-gradient(1px 1px at 75% 5%,rgba(255,255,255,0.5),transparent),radial-gradient(1px 1px at 90% 25%,rgba(255,255,255,0.7),transparent),radial-gradient(1px 1px at 5% 45%,rgba(255,255,255,0.4),transparent),radial-gradient(1.5px 1.5px at 25% 35%,rgba(255,255,255,0.6),transparent),radial-gradient(1px 1px at 65% 40%,rgba(255,255,255,0.5),transparent),radial-gradient(1px 1px at 82% 38%,rgba(255,255,255,0.8),transparent),radial-gradient(2px 2px at 50% 18%,rgba(201,168,76,0.4),transparent),radial-gradient(1.5px 1.5px at 70% 32%,rgba(201,168,76,0.3),transparent);animation:starsDrift 120s linear infinite}
+@keyframes starsDrift{from{transform:translateY(0)}to{transform:translateY(-20px)}}
+.hero-layer-ocean{background:radial-gradient(ellipse at 50% 100%,rgba(11,61,145,0.6) 0%,transparent 55%),radial-gradient(ellipse at 50% 60%,rgba(7,32,96,0.4) 0%,transparent 60%),linear-gradient(180deg,#010810 0%,#020f22 30%,#041530 55%,#072060 75%,#0b3d91 90%,#072060 100%);animation:oceanBreath 18s ease-in-out infinite alternate}
+@keyframes oceanBreath{from{opacity:0.85}to{opacity:1}}
+.hero-layer-bloom{background:radial-gradient(ellipse at 50% 75%,rgba(201,168,76,0.06) 0%,transparent 50%),radial-gradient(ellipse at 30% 50%,rgba(11,61,145,0.2) 0%,transparent 40%),radial-gradient(ellipse at 70% 50%,rgba(11,61,145,0.2) 0%,transparent 40%);animation:bloomPulse 8s ease-in-out infinite alternate}
+@keyframes bloomPulse{from{opacity:0.5}to{opacity:1}}
+.hero-horizon{position:absolute;bottom:32%;left:0;right:0;height:1px;background:linear-gradient(to right,transparent 0%,rgba(201,168,76,0.15) 15%,rgba(201,168,76,0.35) 40%,rgba(201,168,76,0.35) 60%,rgba(201,168,76,0.15) 85%,transparent 100%);z-index:2;animation:horizonFade 3s 2s both}
+@keyframes horizonFade{from{opacity:0;transform:scaleX(0.3)}to{opacity:1;transform:scaleX(1)}}
+.hero-ocean-floor{position:absolute;bottom:0;left:0;right:0;height:35%;z-index:2;overflow:hidden}
+.wave-layer{position:absolute;bottom:0;left:-50%;width:200%;height:90px}
+.wave-layer svg{width:100%;height:100%}
+.wave-layer--1{animation:waveDrift 14s linear infinite;opacity:0.7}
+.wave-layer--2{animation:waveDrift 20s linear infinite reverse;opacity:0.4;bottom:8px}
+.wave-layer--3{animation:waveDrift 10s linear infinite;opacity:0.25;bottom:16px}
+@keyframes waveDrift{from{transform:translateX(0)}to{transform:translateX(25%)}}
+
+.hero-content{position:relative;z-index:5;max-width:920px;padding:2rem}
+.hero-eyebrow{font-family:'Montserrat',sans-serif;font-size:0.58rem;letter-spacing:0.55em;text-transform:uppercase;color:var(--gold);margin-bottom:2.5rem;opacity:0;animation:revealFade 1.2s var(--ease-cinema) 1s both}
+.title-line{display:block;overflow:hidden;line-height:1.05;padding-bottom:0.05em}
+.title-line-inner{display:block;font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(3.2rem,7.5vw,7rem);color:#fff;transform:translateY(110%);animation:titleRise 1.4s var(--ease-cinema) both}
+.title-line:nth-child(1) .title-line-inner{animation-delay:0.6s}
+.title-line:nth-child(2) .title-line-inner{animation-delay:0.82s;font-style:italic;color:var(--gold-light);font-size:clamp(2.8rem,6.5vw,6rem)}
+@keyframes titleRise{from{transform:translateY(110%)}to{transform:translateY(0)}}
+.hero-ornament{display:flex;align-items:center;justify-content:center;gap:1.5rem;margin:2.5rem 0;opacity:0;animation:revealFade 1s var(--ease-cinema) 2s both}
+.hero-ornament-line{height:1px;width:100px;background:linear-gradient(to right,transparent,var(--gold))}
+.hero-ornament-line:last-child{background:linear-gradient(to left,transparent,var(--gold))}
+.hero-ornament-anchor{font-size:1.1rem;color:var(--gold);animation:anchorSway 6s ease-in-out infinite}
+@keyframes anchorSway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+.hero-subtitle{font-size:1.25rem;font-weight:300;font-style:italic;color:rgba(245,240,232,0.7);max-width:580px;margin:0 auto 3rem;line-height:1.85;opacity:0;animation:revealFade 1s var(--ease-cinema) 2.2s both}
+.hero-cta{display:inline-flex;align-items:center;gap:1rem;padding:1rem 3rem;border:1px solid rgba(201,168,76,0.4);color:rgba(201,168,76,0.9);font-family:'Montserrat',sans-serif;font-size:0.6rem;letter-spacing:0.35em;text-transform:uppercase;text-decoration:none;transition:all 0.6s var(--ease-cinema);position:relative;overflow:hidden;opacity:0;animation:revealFade 1s var(--ease-cinema) 2.5s both}
+.hero-cta::before{content:'';position:absolute;inset:0;background:var(--gold);transform:translateX(-101%);transition:transform 0.5s var(--ease-cinema)}
+.hero-cta:hover::before{transform:translateX(0)}
+.hero-cta:hover{color:var(--midnight);border-color:var(--gold)}
+.hero-cta span{position:relative;z-index:1}
+.hero-cta-arrow{position:relative;z-index:1;transition:transform 0.5s var(--ease-cinema)}
+.hero-cta:hover .hero-cta-arrow{transform:translateY(4px)}
+.scroll-indicator{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);z-index:5;display:flex;flex-direction:column;align-items:center;gap:0.5rem;opacity:0;animation:revealFade 1s var(--ease-cinema) 3.2s both}
+.scroll-indicator-line{width:1px;height:40px;background:linear-gradient(to bottom,var(--gold),transparent);animation:scrollPulse 2.5s ease-in-out infinite}
+@keyframes scrollPulse{0%,100%{transform:scaleY(1);opacity:0.6}50%{transform:scaleY(0.5);opacity:1}}
+.scroll-indicator-text{font-family:'Montserrat',sans-serif;font-size:0.5rem;letter-spacing:0.4em;color:rgba(201,168,76,0.5);text-transform:uppercase}
+@keyframes revealFade{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ INTRO ═══ */
+.intro-section{padding:12rem 2rem;text-align:center;background:linear-gradient(180deg,var(--abyss) 0%,var(--midnight) 60%,var(--deep) 100%);position:relative;overflow:hidden}
+.intro-section::before{content:'ÉQUIPAGE';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Playfair Display',serif;font-size:clamp(6rem,18vw,15rem);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(11,61,145,0.12);white-space:nowrap;pointer-events:none;letter-spacing:0.15em;user-select:none}
+.eyebrow{font-family:'Montserrat',sans-serif;font-size:0.55rem;letter-spacing:0.5em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:1.5rem}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,4.5vw,3.8rem);font-weight:700;color:#fff;line-height:1.1;margin-bottom:2.5rem}
+.intro-lead{max-width:740px;margin:0 auto 5rem;font-size:1.2rem;line-height:2;color:rgba(245,240,232,0.65);font-weight:300;font-style:italic;position:relative}
+.manifest-grid{display:grid;grid-template-columns:repeat(11,1fr);max-width:1000px;margin:0 auto;border:1px solid rgba(201,168,76,0.12)}
+.manifest-item{padding:2rem 0.75rem;text-align:center;border-right:1px solid rgba(201,168,76,0.08);position:relative;overflow:hidden;transition:background 0.5s;cursor:default}
+.manifest-item:last-child{border-right:none}
+.manifest-item::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent);transform:scaleX(0);transition:transform 0.5s var(--ease-cinema)}
+.manifest-item:hover{background:rgba(201,168,76,0.04)}.manifest-item:hover::after{transform:scaleX(1)}
+.manifest-number{font-family:'Montserrat',sans-serif;font-size:0.45rem;letter-spacing:0.2em;color:rgba(201,168,76,0.4);display:block;margin-bottom:0.75rem}
+.manifest-icon{font-family:'Cormorant Garamond',serif;font-size:0.7rem;font-style:italic;font-weight:400;letter-spacing:0.2em;color:rgba(201,168,76,0.6);display:block;margin-bottom:0.75rem;transition:transform 0.5s var(--ease-cinema)}
+.manifest-item:hover .manifest-icon{transform:translateY(-3px)}
+.manifest-name{font-family:'Montserrat',sans-serif;font-size:0.48rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(245,240,232,0.55);line-height:1.4;transition:color 0.3s}
+.manifest-item:hover .manifest-name{color:var(--gold-light)}
+
+/* CHAPTER BREAK */
+.chapter-break{position:relative;height:140px;overflow:hidden;background:var(--deep);display:flex;align-items:center;justify-content:center}
+.chapter-break-line{position:absolute;left:0;right:0;height:1px;background:linear-gradient(to right,transparent 0%,var(--gold-dim) 20%,rgba(201,168,76,0.5) 50%,var(--gold-dim) 80%,transparent 100%)}
+.chapter-break-text{font-family:'Montserrat',sans-serif;font-size:0.5rem;letter-spacing:0.6em;text-transform:uppercase;color:rgba(201,168,76,0.35);z-index:1;background:var(--deep);padding:0 3rem}
+
+/* ═══ ROLES ═══ */
+.roles-container{background:var(--midnight);padding:0 0 8rem;position:relative}
+.role-chapter{position:relative;padding:7rem 4rem 4rem;max-width:1200px;margin:0 auto;opacity:0;transform:translateY(60px);transition:opacity 0.9s var(--ease-cinema),transform 0.9s var(--ease-cinema)}
+.role-chapter.visible{opacity:1;transform:translateY(0)}
+.chapter-bg-num{position:absolute;right:3rem;top:50%;transform:translateY(-50%);font-family:'Playfair Display',serif;font-size:clamp(10rem,18vw,16rem);font-weight:900;line-height:1;color:transparent;-webkit-text-stroke:1px rgba(201,168,76,0.06);user-select:none;pointer-events:none;letter-spacing:-0.03em;transition:-webkit-text-stroke-color 0.5s}
+.role-chapter:hover .chapter-bg-num{-webkit-text-stroke-color:rgba(201,168,76,0.1)}
+.role-inner{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;position:relative;z-index:1}
+.role-inner.reverse{direction:rtl}.role-inner.reverse>*{direction:ltr}
+.role-num{font-family:'Montserrat',sans-serif;font-size:0.55rem;letter-spacing:0.4em;color:rgba(201,168,76,0.4);margin-bottom:0.3rem;display:block}
+.role-tag{font-family:'Montserrat',sans-serif;font-size:0.55rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:0.8rem;display:block;opacity:0.8}
+.role-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,3.5vw,2.8rem);font-weight:700;color:#fff;margin-bottom:1.5rem;line-height:1.15;position:relative;display:inline-block}
+.role-title::after{content:'';position:absolute;bottom:-8px;left:0;width:40px;height:1px;background:var(--gold);transition:width 0.8s var(--ease-cinema)}
+.role-chapter.visible .role-title::after{width:100%;transition-delay:0.5s}
+.role-desc{font-size:1.1rem;line-height:1.9;color:rgba(245,240,232,0.65);font-weight:300;margin-bottom:2rem}
+.role-duties{list-style:none;margin-bottom:2rem}
+.role-duties li{display:flex;gap:1rem;align-items:flex-start;font-size:0.95rem;color:rgba(245,240,232,0.7);margin-bottom:0.65rem;line-height:1.6;padding-bottom:0.65rem;border-bottom:1px solid rgba(245,240,232,0.04)}
+.role-duties li:last-child{border-bottom:none}
+.duty-bullet{width:4px;height:4px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:0.55rem;box-shadow:0 0 6px rgba(201,168,76,0.4)}
+.example-block{background:linear-gradient(135deg,rgba(11,61,145,0.1) 0%,rgba(201,168,76,0.04) 100%);border:1px solid rgba(201,168,76,0.12);border-left:2px solid var(--gold);padding:1.25rem 1.5rem;border-radius:0 6px 6px 0;margin-bottom:1.5rem;transition:background 0.3s}
+.example-block:hover{background:linear-gradient(135deg,rgba(11,61,145,0.18) 0%,rgba(201,168,76,0.07) 100%)}
+.example-label{font-family:'Montserrat',sans-serif;font-size:0.5rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:0.5rem}
+.example-text{font-style:italic;font-size:0.98rem;color:rgba(245,240,232,0.75);line-height:1.7}
+
+
+
+
+/* VIDEO */
+.video-block{background:var(--abyss);border:1px solid rgba(201,168,76,0.15);border-radius:8px;overflow:hidden;position:sticky;top:8rem;box-shadow:0 30px 80px rgba(0,0,0,0.6),0 0 60px rgba(11,61,145,0.1);transition:box-shadow 0.5s,border-color 0.5s}
+.video-block:hover{border-color:rgba(201,168,76,0.3);box-shadow:0 40px 100px rgba(0,0,0,0.7),0 0 80px rgba(11,61,145,0.2)}
+.video-placeholder{aspect-ratio:16/9;background:linear-gradient(150deg,rgba(11,61,145,0.3) 0%,rgba(3,13,31,0.95) 50%,rgba(6,26,58,0.8) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;transition:all 0.5s var(--ease-cinema)}
+.video-placeholder::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(11,61,145,0.04) 2px,rgba(11,61,145,0.04) 4px);pointer-events:none}
+.video-placeholder:hover{background:linear-gradient(150deg,rgba(11,61,145,0.45) 0%,rgba(3,13,31,0.98) 50%,rgba(6,26,58,0.9) 100%)}
+.play-btn{width:70px;height:70px;border-radius:50%;border:1px solid rgba(201,168,76,0.4);display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;position:relative;z-index:1;transition:all 0.5s var(--ease-cinema);background:rgba(201,168,76,0.06)}
+.play-btn svg{width:22px;height:22px;fill:var(--gold);margin-left:4px;transition:fill 0.4s,transform 0.4s}
+.video-placeholder:hover .play-btn{background:var(--gold);border-color:var(--gold);transform:scale(1.08);box-shadow:0 0 30px rgba(201,168,76,0.35)}
+.video-placeholder:hover .play-btn svg{fill:var(--midnight);transform:scale(1.1)}
+.video-caption{position:relative;z-index:1;text-align:center}
+.video-caption-main{font-family:'Montserrat',sans-serif;font-size:0.62rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(245,240,232,0.5);display:block;margin-bottom:0.3rem}
+.video-caption-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.82rem;color:rgba(245,240,232,0.3)}
+.video-footer{display:flex;align-items:center;gap:0.75rem;padding:0.9rem 1.25rem;border-top:1px solid rgba(201,168,76,0.08);background:rgba(1,8,16,0.5)}
+.video-footer-label{font-family:'Montserrat',sans-serif;font-size:0.5rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(201,168,76,0.5);white-space:nowrap;flex-shrink:0}
+.video-footer-input{flex:1;background:transparent;border:none;border-bottom:1px dashed rgba(201,168,76,0.2);color:rgba(245,240,232,0.7);font-family:'Montserrat',sans-serif;font-size:0.6rem;padding:0.25rem 0.4rem;outline:none;transition:border-color 0.3s}
+.video-footer-input:focus{border-color:rgba(201,168,76,0.5);color:var(--cream)}
+.video-footer-input::placeholder{color:rgba(245,240,232,0.2);font-style:italic}
+.video-embed{width:100%;aspect-ratio:16/9;border:none;display:block}
+.video-loaded .video-placeholder{display:none}
+.video-loaded .video-embed-wrapper{display:block}
+.video-embed-wrapper{display:none;position:relative}
+
+/* PHOTO GALLERY */
+.photo-gallery{margin-top:1.2rem;border:1px solid rgba(201,168,76,0.12);border-radius:8px;overflow:hidden;background:rgba(1,8,16,0.4)}
+.photo-gallery-header{display:flex;align-items:center;justify-content:space-between;padding:0.7rem 1.1rem;border-bottom:1px solid rgba(201,168,76,0.08);background:rgba(1,8,16,0.5)}
+.photo-gallery-label{font-family:'Montserrat',sans-serif;font-size:0.48rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(201,168,76,0.5)}
+.photo-upload-btn{font-family:'Montserrat',sans-serif;font-size:0.48rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(201,168,76,0.7);background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);padding:0.35rem 0.9rem;border-radius:3px;cursor:pointer;transition:all 0.3s}
+.photo-upload-btn:hover{background:rgba(201,168,76,0.12);border-color:rgba(201,168,76,0.4);color:var(--gold-light)}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;min-height:80px;padding:2px}
+.photo-grid:empty::after{content:'Ajoutez des photos ci-dessus';grid-column:1/-1;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.85rem;color:rgba(245,240,232,0.2);padding:1.5rem;min-height:80px}
+.photo-thumb{aspect-ratio:4/3;object-fit:cover;width:100%;display:block;border-radius:2px;cursor:pointer;transition:opacity 0.3s,transform 0.3s}
+.photo-thumb:hover{opacity:0.8;transform:scale(1.02)}
+.photo-slot{aspect-ratio:4/3;background:rgba(201,168,76,0.03);border:1px dashed rgba(201,168,76,0.1);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:rgba(201,168,76,0.15)}
+
+/* LIGHTBOX */
+.lightbox{position:fixed;inset:0;background:rgba(1,8,16,0.95);z-index:9999;display:none;align-items:center;justify-content:center;cursor:zoom-out}
+.lightbox.open{display:flex}
+.lightbox img{max-width:90vw;max-height:90vh;object-fit:contain;border:1px solid rgba(201,168,76,0.15);box-shadow:0 0 80px rgba(0,0,0,0.8)}
+.lightbox-close{position:absolute;top:2rem;right:2rem;font-family:'Montserrat',sans-serif;font-size:0.6rem;letter-spacing:0.3em;color:rgba(201,168,76,0.5);cursor:pointer;text-transform:uppercase}
+
+/* ROLE SEP */
+.role-sep{position:relative;max-width:1200px;margin:0 auto;padding:0 4rem;height:60px;display:flex;align-items:center}
+.role-sep-inner{width:100%;height:1px;background:linear-gradient(to right,transparent 0%,rgba(201,168,76,0.06) 15%,rgba(201,168,76,0.2) 50%,rgba(201,168,76,0.06) 85%,transparent 100%);position:relative}
+.role-sep-inner::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(45deg);width:5px;height:5px;border:1px solid rgba(201,168,76,0.3);background:var(--midnight)}
+
+/* CONCLUSION */
+.conclusion{padding:12rem 2rem;text-align:center;background:linear-gradient(180deg,var(--midnight) 0%,var(--abyss) 100%);position:relative;overflow:hidden}
+.conclusion-stars{position:absolute;inset:0;background-image:radial-gradient(1px 1px at 10% 15%,rgba(255,255,255,0.4),transparent),radial-gradient(1.5px 1.5px at 30% 8%,rgba(255,255,255,0.6),transparent),radial-gradient(1px 1px at 60% 20%,rgba(255,255,255,0.5),transparent),radial-gradient(2px 2px at 80% 12%,rgba(201,168,76,0.4),transparent),radial-gradient(1px 1px at 45% 30%,rgba(255,255,255,0.3),transparent);pointer-events:none}
+.conclusion-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(11,61,145,0.2) 0%,transparent 70%);pointer-events:none}
+.conclusion-content{position:relative;z-index:1;max-width:760px;margin:0 auto}
+.conclusion-divider{display:flex;align-items:center;justify-content:center;gap:1.5rem;margin:2.5rem 0}
+.conclusion-divider-line{height:1px;width:80px;background:linear-gradient(to right,transparent,rgba(201,168,76,0.5))}
+.conclusion-divider-line:last-child{background:linear-gradient(to left,transparent,rgba(201,168,76,0.5))}
+.conclusion-divider-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px rgba(201,168,76,0.6)}
+.conclusion-quote{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,3.5vw,2.2rem);font-style:italic;color:#fff;line-height:1.65;font-weight:400;margin-bottom:1rem}
+.conclusion-attr{font-family:'Montserrat',sans-serif;font-size:0.55rem;letter-spacing:0.35em;text-transform:uppercase;color:rgba(201,168,76,0.5);margin-bottom:3rem}
+.conclusion-body{font-size:1.1rem;line-height:2;color:rgba(245,240,232,0.6);font-weight:300;margin-bottom:1.5rem}
+.conclusion-final{font-family:'Playfair Display',serif;font-size:1.4rem;font-style:italic;color:var(--gold-light);margin-top:2rem}
+.conclusion-anchor{display:inline-block;font-size:2rem;margin-top:3rem;color:rgba(201,168,76,0.4);animation:anchorFloat 5s ease-in-out infinite}
+@keyframes anchorFloat{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-10px) rotate(5deg)}}
+
+/* FOOTER */
+footer{padding:2.5rem 4rem;border-top:1px solid rgba(201,168,76,0.08);background:var(--abyss);display:flex;justify-content:space-between;align-items:center}
+.footer-brand{font-family:'Playfair Display',serif;font-size:0.8rem;color:rgba(201,168,76,0.4);letter-spacing:0.1em}
+.footer-info{font-family:'Montserrat',sans-serif;font-size:0.5rem;letter-spacing:0.25em;text-transform:uppercase;color:rgba(245,240,232,0.2)}
+
+section{position:relative;z-index:1}
+@media(max-width:900px){.role-inner{grid-template-columns:1fr;gap:2.5rem}.role-inner.reverse{direction:ltr}.chapter-bg-num{display:none}nav{padding:1rem 1.5rem}.nav-links{display:none}.manifest-grid{grid-template-columns:repeat(4,1fr)}footer{flex-direction:column;gap:0.5rem;text-align:center}.role-chapter{padding:4rem 1.5rem 3rem}}
+</style>
+</head>
+<body>
+
+<div class="grain-overlay"></div>
+<div class="vignette"></div>
+<div id="progress-bar"></div>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav id="nav">
+  <div class="nav-logo">⚓ Tournage · Titanic</div>
+  <ul class="nav-links">
+    <li><a href="#intro">Équipage</a></li>
+    <li><a href="#roles">Les Rôles</a></li>
+    <li><a href="#conclusion">Épilogue</a></li>
+  </ul>
+  <div class="nav-chapter" id="nav-chapter">&nbsp;</div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="hero">
+  <div class="hero-layer hero-layer-stars"></div>
+  <div class="hero-layer hero-layer-ocean"></div>
+  <div class="hero-layer hero-layer-bloom"></div>
+  <div class="hero-horizon"></div>
+  <div class="hero-ocean-floor">
+    <div class="wave-layer wave-layer--1"><svg viewBox="0 0 1440 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path fill="rgba(11,61,145,0.35)" d="M0,45 C240,85 480,5 720,45 C960,85 1200,10 1440,45 L1440,90 L0,90 Z"/></svg></div>
+    <div class="wave-layer wave-layer--2"><svg viewBox="0 0 1440 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path fill="rgba(7,32,96,0.4)" d="M0,55 C300,15 600,75 900,40 C1100,18 1300,60 1440,50 L1440,90 L0,90 Z"/></svg></div>
+    <div class="wave-layer wave-layer--3"><svg viewBox="0 0 1440 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path fill="rgba(3,13,31,0.8)" d="M0,60 C200,30 400,70 600,50 C800,30 1100,65 1440,45 L1440,90 L0,90 Z"/></svg></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">&#9632; Les métiers du tournage &nbsp;·&nbsp; 11 rôles · 11 destins</div>
+    <h1>
+      <span class="title-line"><span class="title-line-inner">Qui fait quoi</span></span>
+      <span class="title-line"><span class="title-line-inner">sur un tournage ?</span></span>
+    </h1>
+    <div class="hero-ornament">
+      <div class="hero-ornament-line"></div>
+      <span class="hero-ornament-anchor">⚓</span>
+      <div class="hero-ornament-line"></div>
+    </div>
+    <p class="hero-subtitle">Du scénariste qui écrit la première ligne au responsable catering qui nourrit l'équipe à 3h du matin — derrière chaque film, 11 métiers invisibles, chacun irremplaçable.</p>
+    <a href="#intro" class="hero-cta"><span>Découvrir l'équipe</span><span class="hero-cta-arrow">▾</span></a>
+  </div>
+  <div class="scroll-indicator">
+    <div class="scroll-indicator-line"></div>
+    <div class="scroll-indicator-text">Défiler</div>
+  </div>
+</section>
+
+<!-- ═══ INTRO ═══ -->
+<section class="intro-section" id="intro">
+  <span class="eyebrow">⚓ Le manifeste de l'équipe</span>
+  <h2 class="section-title">11 rôles. Un seul film.</h2>
+  <p class="intro-lead">Le scénariste imagine. Le réalisateur commande. Le régisseur organise. Le directeur photo éclaire. Le chef costumier habille. Le décorateur construit. L'habilleur veille. Le maquilleur transforme. Le coiffeur efface ses traces. Et le catering nourrit tout ce monde — chaque nuit, chaque aube. Retirez l'un d'eux : le film s'effondre.</p>
+  <div class="manifest-grid">
+    <div class="manifest-item"><span class="manifest-number">01</span><span class="manifest-icon">I</span><span class="manifest-name">Scénariste</span></div>
+    <div class="manifest-item"><span class="manifest-number">02</span><span class="manifest-icon">II</span><span class="manifest-name">Réalisateur</span></div>
+    <div class="manifest-item"><span class="manifest-number">03</span><span class="manifest-icon">III</span><span class="manifest-name">1<sup>er</sup> Assist.</span></div>
+    <div class="manifest-item"><span class="manifest-number">04</span><span class="manifest-icon">IV</span><span class="manifest-name">Régisseur</span></div>
+    <div class="manifest-item"><span class="manifest-number">05</span><span class="manifest-icon">V</span><span class="manifest-name">Dir. Photo</span></div>
+    <div class="manifest-item"><span class="manifest-number">06</span><span class="manifest-icon">VI</span><span class="manifest-name">Chef Costum.</span></div>
+    <div class="manifest-item"><span class="manifest-number">07</span><span class="manifest-icon">VII</span><span class="manifest-name">Chef Décor.</span></div>
+    <div class="manifest-item"><span class="manifest-number">08</span><span class="manifest-icon">VIII</span><span class="manifest-name">Habilleur</span></div>
+    <div class="manifest-item"><span class="manifest-number">09</span><span class="manifest-icon">IX</span><span class="manifest-name">Maquilleur</span></div>
+    <div class="manifest-item"><span class="manifest-number">10</span><span class="manifest-icon">X</span><span class="manifest-name">Coiffeur</span></div>
+    <div class="manifest-item" style="border-right:none"><span class="manifest-number">11</span><span class="manifest-icon">XI</span><span class="manifest-name">Catering</span></div>
+  </div>
+</section>
+
+<div class="chapter-break"><div class="chapter-break-line"></div><div class="chapter-break-text">Acte I — La Vision &amp; le Commandement</div></div>
+
+<div class="roles-container" id="roles">
+
+<!-- 01 SCÉNARISTE -->
+<div class="role-chapter" data-chapter="Scénariste" data-num="01">
+  <div class="chapter-bg-num">01</div>
+  <div class="role-inner">
+    <div class="role-text">
+      <span class="role-num">RÔLE 01 / 11</span><span class="role-tag">La vision — L'architecte des mots</span>
+      <h2 class="role-title">Le Scénariste</h2>
+      <p class="role-desc">Il est l'architecte du film. Avant qu'une seule caméra ne tourne, le scénariste transforme une idée en un scénario complet et détaillé — la carte de navigation du voyage à venir.</p>
+      <ul class="role-duties">
+        <li><span class="duty-bullet"></span>Développer l'histoire, les personnages et les dialogues</li>
+        <li><span class="duty-bullet"></span>Rédiger un scénario complet, structuré, prêt à tourner</li>
+        <li><span class="duty-bullet"></span>Collaborer avec le réalisateur pour affiner la vision</li>
+        <li><span class="duty-bullet"></span>Assurer les révisions tout au long de la préproduction</li>
+      </ul>
+      <div class="example-block"><span class="example-label">Exemple Titanic</span><p class="example-text">James Cameron a écrit lui-même le scénario de Titanic. Ce sont ses mots — « You jump, I jump » — qui ont traversé le temps. Sans ce texte précis, aucune émotion n'aurait été possible.</p></div>
+    </div>
+    <div class="role-visual">
+      <div class="video-block" data-loaded="false">
+        <div class="video-embed-wrapper">
+          <iframe class="video-embed" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+        </div>
+        <div class="video-placeholder">
+          <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="video-caption">
+            <span class="video-caption-main">Insérer une vidéo YouTube</span>
+            <span class="video-caption-sub">Ex : Interview scénariste / Making-of écriture</span>
+          </div>
+        </div>
+        <div class="video-footer">
+          <span class="video-footer-label">Lien YouTube</span>
+          <input type="text" class="video-footer-input" placeholder="https://www.youtube.com/watch?v=... ou shorts/...">
+          <button class="photo-upload-btn" style="flex-shrink:0" onclick="loadVideo(this)">Charger</button>
+        </div>
+      </div>
+      <div class="photo-gallery">
+        <div class="photo-gallery-header">
+          <span class="photo-gallery-label">Photos · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+        </div>
+        <div class="photo-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="role-sep"><div class="role-sep-inner"></div></div>
+
+<!-- 02 RÉALISATEUR -->
+<div class="role-chapter" data-chapter="Réalisateur" data-num="02">
+  <div class="chapter-bg-num">02</div>
+  <div class="role-inner reverse">
+    <div class="role-text">
+      <span class="role-num">RÔLE 02 / 11</span><span class="role-tag">Le commandant — Capitaine du navire</span>
+      <h2 class="role-title">Le Réalisateur</h2>
+      <p class="role-desc">Il est le capitaine. Sa vision artistique guide chaque décision, du casting aux effets spéciaux. Il assure la mise en scène et supervise tout, de la préparation jusqu'à la diffusion.</p>
+      <ul class="role-duties">
+        <li><span class="duty-bullet"></span>Assurer la mise en scène et diriger les acteurs</li>
+        <li><span class="duty-bullet"></span>Participer à la préparation technique : casting, repérages</li>
+        <li><span class="duty-bullet"></span>Superviser le tournage au quotidien</li>
+        <li><span class="duty-bullet"></span>Superviser le montage et la postproduction</li>
+      </ul>
+      <div class="example-block"><span class="example-label">Exemple Titanic</span><p class="example-text">James Cameron a failli se noyer en dirigeant des séquences de naufrage à 4°C. Sa rigueur obsessionnelle — reconstruire le paquebot à l'échelle 1:1 — illustre l'investissement total du réalisateur.</p></div>
+    </div>
+    <div class="role-visual">
+      <div class="video-block" data-loaded="false">
+        <div class="video-embed-wrapper">
+          <iframe class="video-embed" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+        </div>
+        <div class="video-placeholder">
+          <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="video-caption">
+            <span class="video-caption-main">Insérer une vidéo YouTube</span>
+            <span class="video-caption-sub">Ex : Making-of Titanic — Cameron en action</span>
+          </div>
+        </div>
+        <div class="video-footer">
+          <span class="video-footer-label">Lien YouTube</span>
+          <input type="text" class="video-footer-input" placeholder="https://www.youtube.com/watch?v=... ou shorts/...">
+          <button class="photo-upload-btn" style="flex-shrink:0" onclick="loadVideo(this)">Charger</button>
+        </div>
+      </div>
+      <div class="photo-gallery">
+        <div class="photo-gallery-header">
+          <span class="photo-gallery-label">Photos · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+        </div>
+        <div class="photo-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="role-sep"><div class="role-sep-inner"></div></div>
+
+<!-- 03 1ER ASSISTANT -->
+<div class="role-chapter" data-chapter="1er Assistant Réalisateur" data-num="03">
+  <div class="chapter-bg-num">03</div>
+  <div class="role-inner">
+    <div class="role-text">
+      <span class="role-num">RÔLE 03 / 11</span><span class="role-tag">Le premier officier — Chef des opérations</span>
+      <h2 class="role-title">Le 1<sup>er</sup> Assistant Réalisateur</h2>
+      <p class="role-desc">Il est le bras droit opérationnel du réalisateur. Il planifie, coordonne, anticipe. Si le réalisateur est le capitaine, le 1er assistant est l'officier qui veille à ce que les ordres soient exécutés.</p>
+      <ul class="role-duties">
+        <li><span class="duty-bullet"></span>Établir le planning de tournage et le respecter</li>
+        <li><span class="duty-bullet"></span>Coordonner toutes les équipes techniques (HMC, électros, décors…)</li>
+        <li><span class="duty-bullet"></span>Assurer la sécurité sur le plateau</li>
+        <li><span class="duty-bullet"></span>Lancer chaque prise : « Moteur ! Action ! »</li>
+      </ul>
+      <div class="example-block"><span class="example-label">Exemple Titanic</span><p class="example-text">Sur un tournage de cette ampleur (6 mois en mer), le 1er assistant coordonnait quotidiennement des centaines de figurants, des plongeurs, des techniciens. Sans lui, le chaos aurait été garanti.</p></div>
+    </div>
+    <div class="role-visual">
+      <div class="video-block" data-loaded="false">
+        <div class="video-embed-wrapper">
+          <iframe class="video-embed" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+        </div>
+        <div class="video-placeholder">
+          <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="video-caption">
+            <span class="video-caption-main">Insérer une vidéo YouTube</span>
+            <span class="video-caption-sub">Ex : Plateau en action — coordination équipes</span>
+          </div>
+        </div>
+        <div class="video-footer">
+          <span class="video-footer-label">Lien YouTube</span>
+          <input type="text" class="video-footer-input" placeholder="https://www.youtube.com/watch?v=... ou shorts/...">
+          <button class="photo-upload-btn" style="flex-shrink:0" onclick="loadVideo(this)">Charger</button>
+        </div>
+      </div>
+      <div class="photo-gallery">
+        <div class="photo-gallery-header">
+          <span class="photo-gallery-label">Photos · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+        </div>
+        <div class="photo-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-break" style="margin:2rem 0"><div class="chapter-break-line"></div><div class="chapter-break-text">Acte II — La Production &amp; le Décor</div></div>
+
+<!-- 04 RÉGISSEUR -->
+<div class="role-chapter" data-chapter="Régisseur" data-num="04">
+  <div class="chapter-bg-num">04</div>
+  <div class="role-inner reverse">
+    <div class="role-text">
+      <span class="role-num">RÔLE 04 / 11</span><span class="role-tag">L'intendant — Maître de la logistique</span>
+      <h2 class="role-title">Le Régisseur</h2>
+      <p class="role-desc">Il gère l'organisation matérielle et logistique du tournage. C'est lui qui fait en sorte que tout soit au bon endroit, au bon moment — de la première réunion jusqu'au dernier clap.</p>
+      <ul class="role-duties">
+        <li><span class="duty-bullet"></span>Repérer les lieux et obtenir les autorisations</li>
+        <li><span class="duty-bullet"></span>Organiser les transports de l'équipe et du matériel</li>
+        <li><span class="duty-bullet"></span>Coordonner le planning de toute la production</li>
+        <li><span class="duty-bullet"></span>S'assurer que les lieux sont opérationnels et sûrs</li>
+      </ul>
+      <div class="example-block"><span class="example-label">Exemple Titanic</span><p class="example-text">Le régisseur de Titanic a coordonné l'accès à un bassin de 17 millions de litres au Mexique : hélitreuillage de matériel, convois de camions, logement de 1 200 techniciens — tout relève de sa responsabilité.</p></div>
+    </div>
+    <div class="role-visual">
+      <div class="video-block" data-loaded="false">
+        <div class="video-embed-wrapper">
+          <iframe class="video-embed" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+        </div>
+        <div class="video-placeholder">
+          <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="video-caption">
+            <span class="video-caption-main">Insérer une vidéo YouTube</span>
+            <span class="video-caption-sub">Ex : Repérages / logistique tournage</span>
+          </div>
+        </div>
+        <div class="video-footer">
+          <span class="video-footer-label">Lien YouTube</span>
+          <input type="text" class="video-footer-input" placeholder="https://www.youtube.com/watch?v=... ou shorts/...">
+          <button class="photo-upload-btn" style="flex-shrink:0" onclick="loadVideo(this)">Charger</button>
+        </div>
+      </div>
+      <div class="photo-gallery">
+        <div class="photo-gallery-header">
+          <span class="photo-gallery-label">Photos · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+        </div>
+        <div class="photo-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="role-sep"><div class="role-sep-inner"></div></div>
+
+<!-- 05 DIRECTEUR PHOTO -->
+<div class="role-chapter" data-chapter="Directeur Photo" data-num="05">
+  <div class="chapter-bg-num">05</div>
+  <div class="role-inner">
+    <div class="role-text">
+      <span class="role-num">RÔLE 05 / 11</span><span class="role-tag">Le poète de la lumière — L'œil du film</span>
+      <h2 class="role-title">Le Directeur Photo</h2>
+      <p class="role-desc">Il conçoit l'identité visuelle du film. Il choisit les angles, orchestre la lumière. C'est grâce à lui que le film est beau à regarder — et que l'émotion passe par l'image.</p>
+      <ul class="role-duties">
+        <li><span class="duty-bullet"></span>Concevoir l'éclairage de chaque scène</li>
+        <li><span class="duty-bullet"></span>Choisir les objectifs, la caméra, les filtres</li>
+        <li><span class="duty-bullet"></span>Diriger l'équipe des électriciens et cadreurs</li>
+        <li><span class="duty-bullet"></span>Garantir la cohérence visuelle du film entier</li>
+      </ul>
+      <div class="example-block"><span class="example-label">Exemple Titanic</span><p class="example-text">Russell Carpenter a remporté l'Oscar pour sa façon de capturer la lumière lunaire sur l'océan. Chaque éclaboussure lors du naufrage était calculée à la lumière près.</p></div>
+    </div>
+    <div class="role-visual">
+      <div class="video-block" data-loaded="false">
+        <div class="video-embed-wrapper">
+          <iframe class="video-embed" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+        </div>
+        <div class="video-placeholder">
+          <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="video-caption">
+            <span class="video-caption-main">Insérer une vidéo YouTube</span>
+            <span class="video-caption-sub">Ex : Coulisses éclairage / scène proue Titanic</span>
+          </div>
+        </div>
+        <div class="video-footer">
+          <span class="video-footer-label">Lien YouTube</span>
+          <input type="text" class="video-footer-input" placeholder="https://www.youtube.com/watch?v=... ou shorts/...">
+          <button class="photo-upload-btn" style="flex-shrink:0" onclick="loadVideo(this)">Charger</button>
+        </div>
+      </div>
+      <div class="photo-gallery">
+        <div class="photo-gallery-header">
+          <span class="photo-gallery-label">Photos · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+        </div>
+        <div class="photo-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="role-sep"><div class="role-sep-inner"></div></div>
+
+<!-- 06 CHEF COSTUMIER -->
+<div class="role-chapter" data-chapter="Chef Costumier" data-num="06">
+  <div class="chapter-bg-num">06</div>
+  <div class="role-inner reverse">
+    <div class="role-text">
+      <span class="role-num">RÔLE 06 / 11</span><span class="role-tag">Maître des apparences — Styliste du film</span>
+      <h2 class="role-title">Le Chef Costumier</h2>
+      <p class="role-desc">Il habille les personnages — et bien au-delà, il raconte leur histoire, leur classe sociale, leur époque par les vêtements. C'est le styliste du film.</p>
+      <ul class="role-duties">
+        <li><span class="duty-bullet"></span>Concevoir ou choisir les costumes selon le scénario</li>
+        <li><span class="duty-bullet"></span>Travailler avec le réalisateur pour garantir l'authenticité</li>
+        <li><span class="duty-bullet"></span>Gérer une équipe de couturiers, habilleurs, accessoristes</li>
+        <li><span class="duty-bullet"></span>Assurer la continuité des costumes entre les scènes</li>
+      </ul>
+      <div class="example-block"><span class="example-label">Exemple Titanic</span><p class="example-text">Deborah Lynn Scott a créé 10 000 costumes pour Titanic, remportant l'Oscar. La robe de bal de Rose en 1ère classe vs ses habits de 3ème classe : chaque vêtement raconte une transformation.</p></div>
+    </div>
+    <div class="role-visual">
+      <div class="video-block" data-loaded="false">
+        <div class="video-embed-wrapper">
+          <iframe class="video-embed" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+        </div>
+        <div class="video-placeholder">
+          <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="video-caption">
+            <span class="video-caption-main">Insérer une vidéo YouTube</span>
+            <span class="video-caption-sub">Ex : Coulisses costumes Titanic / atelier</span>
+          </div>
+        </div>
+        <div class="video-footer">
+          <span class="video-footer-label">Lien YouTube</span>
+          <input type="text" class="video-footer-input" placeholder="https://www.youtube.com/watch?v=... ou shorts/...">
+          <button class="photo-upload-btn" style="flex-shrink:0" onclick="loadVideo(this)">Charger</button>
+        </div>
+      </div>
+      <div class="photo-gallery">
+        <div class="photo-gallery-header">
+          <span class="photo-gallery-label">Photos · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+        </div>
+        <div class="photo-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="role-sep"><div class="role-sep-inner"></div></div>
+
+<!-- 07 CHEF DÉCORATEUR -->
+<div class="role-chapter" data-chapter="Chef Décorateur" data-num="07">
+  <div class="chapter-bg-num">07</div>
+  <div class="role-inner">
+    <div class="role-text">
+      <span class="role-num">RÔLE 07 / 11</span><span class="role-tag">Constructeur de mondes — L'architecte du réel</span>
+      <h2 class="role-title">Le Chef Décorateur</h2>
+      <p class="role-desc">Il construit les lieux où vit le film. En étroite collaboration avec le réalisateur — dont il est l'un des premiers à lire le scénario — il crée les espaces qui plongent le spectateur dans l'histoire.</p>
+      <ul class="role-duties">
+        <li><span class="duty-bullet"></span>Rechercher les décors naturels ou les concevoir en studio</li>
+        <li><span class="duty-bullet"></span>Superviser constructeurs, peintres, menuisiers</li>
+        <li><span class="duty-bullet"></span>Garantir la cohérence visuelle et historique des décors</li>
+        <li><span class="duty-bullet"></span>Collaborer étroitement avec le directeur photo</li>
+      </ul>
+      <div class="example-block"><span class="example-label">Exemple Titanic</span><p class="example-text">Peter Lamont a reconstruit le grand escalier du Titanic à l'échelle réelle. Le résultat était si fidèle que des survivants du naufrage original en ont été émus aux larmes.</p></div>
+    </div>
+    <div class="role-visual">
+      <div class="video-block" data-loaded="false">
+        <div class="video-embed-wrapper">
+          <iframe class="video-embed" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+        </div>
+        <div class="video-placeholder">
+          <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="video-caption">
+            <span class="video-caption-main">Insérer une vidéo YouTube</span>
+            <span class="video-caption-sub">Ex : Construction décor Titanic en studio</span>
+          </div>
+        </div>
+        <div class="video-footer">
+          <span class="video-footer-label">Lien YouTube</span>
+          <input type="text" class="video-footer-input" placeholder="https://www.youtube.com/watch?v=... ou shorts/...">
+          <button class="photo-upload-btn" style="flex-shrink:0" onclick="loadVideo(this)">Charger</button>
+        </div>
+      </div>
+      <div class="photo-gallery">
+        <div class="photo-gallery-header">
+          <span class="photo-gallery-label">Photos · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+        </div>
+        <div class="photo-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-break" style="margin:2rem 0"><div class="chapter-break-line"></div><div class="chapter-break-text">Acte III — Les Coulisses &amp; le Soin</div></div>
+
+<!-- 08 HABILLEUR -->
+<div class="role-chapter" data-chapter="Habilleur" data-num="08">
+  <div class="chapter-bg-num">08</div>
+  <div class="role-inner reverse">
+    <div class="role-text">
+      <span class="role-num">RÔLE 08 / 11</span><span class="role-tag">L'intendant des costumes — Gardien de la continuité</span>
+      <h2 class="role-title">L'Habilleur</h2>
+      <p class="role-desc">Il assiste les acteurs pendant le tournage. Sous les ordres du chef costumier, il gère les costumes au quotidien sur le plateau — réparer les imprévus, garantir la continuité entre les scènes.</p>
+      <ul class="role-duties">
+        <li><span class="duty-bullet"></span>Aider les acteurs à s'habiller avant chaque prise</li>
+        <li><span class="duty-bullet"></span>Réparer les petits accrocs durant le tournage</li>
+        <li><span class="duty-bullet"></span>Gérer le transport des costumes entre les lieux</li>
+        <li><span class="duty-bullet"></span>Ranger et entretenir la garde-robe</li>
+      </ul>
+      <div class="example-block"><span class="example-label">Exemple Titanic</span><p class="example-text">Entre deux prises dans l'eau glacée, les habilleurs enveloppaient immédiatement les acteurs de robes de chambre chauffées. Sans eux, Kate Winslet aurait refusé de tourner la scène du sauvetage.</p></div>
+    </div>
+    <div class="role-visual">
+      <div class="video-block" data-loaded="false">
+        <div class="video-embed-wrapper">
+          <iframe class="video-embed" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+        </div>
+        <div class="video-placeholder">
+          <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="video-caption">
+            <span class="video-caption-main">Insérer une vidéo YouTube</span>
+            <span class="video-caption-sub">Ex : Coulisses habillage acteurs sur plateau</span>
+          </div>
+        </div>
+        <div class="video-footer">
+          <span class="video-footer-label">Lien YouTube</span>
+          <input type="text" class="video-footer-input" placeholder="https://www.youtube.com/watch?v=... ou shorts/...">
+          <button class="photo-upload-btn" style="flex-shrink:0" onclick="loadVideo(this)">Charger</button>
+        </div>
+      </div>
+      <div class="photo-gallery">
+        <div class="photo-gallery-header">
+          <span class="photo-gallery-label">Photos · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+        </div>
+        <div class="photo-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="role-sep"><div class="role-sep-inner"></div></div>
+
+<!-- 09 MAQUILLEUR -->
+<div class="role-chapter" data-chapter="Maquilleur" data-num="09">
+  <div class="chapter-bg-num">09</div>
+  <div class="role-inner">
+    <div class="role-text">
+      <span class="role-num">RÔLE 09 / 11</span><span class="role-tag">Artiste de la transformation — L'illusionniste</span>
+      <h2 class="role-title">Le Maquilleur</h2>
+      <p class="role-desc">Il crée des personnages, parfois des monstres, toujours de l'illusion. Sa mission principale : faire disparaître tout ce que la caméra ne devrait pas voir.</p>
+      <ul class="role-duties">
+        <li><span class="duty-bullet"></span>Maquiller les acteurs selon le personnage et l'époque</li>
+        <li><span class="duty-bullet"></span>Créer des effets spéciaux : vieillissement, blessures, cicatrices</li>
+        <li><span class="duty-bullet"></span>Retoucher entre chaque prise pour la continuité</li>
+        <li><span class="duty-bullet"></span>Neutraliser les imperfections visibles à l'image</li>
+      </ul>
+      <div class="example-block"><span class="example-label">Exemple Titanic</span><p class="example-text">Les maquilleurs ont créé des effets d'hypothermie sur les acteurs. La Rose âgée (Gloria Stuart, 87 ans) nécessitait plusieurs heures de maquillage prothétique chaque matin.</p></div>
+    </div>
+    <div class="role-visual">
+      <div class="video-block" data-loaded="false">
+        <div class="video-embed-wrapper">
+          <iframe class="video-embed" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+        </div>
+        <div class="video-placeholder">
+          <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="video-caption">
+            <span class="video-caption-main">Insérer une vidéo YouTube</span>
+            <span class="video-caption-sub">Ex : Maquillage effets spéciaux / vieillissement</span>
+          </div>
+        </div>
+        <div class="video-footer">
+          <span class="video-footer-label">Lien YouTube</span>
+          <input type="text" class="video-footer-input" placeholder="https://www.youtube.com/watch?v=... ou shorts/...">
+          <button class="photo-upload-btn" style="flex-shrink:0" onclick="loadVideo(this)">Charger</button>
+        </div>
+      </div>
+      <div class="photo-gallery">
+        <div class="photo-gallery-header">
+          <span class="photo-gallery-label">Photos · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+        </div>
+        <div class="photo-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="role-sep"><div class="role-sep-inner"></div></div>
+
+<!-- 10 COIFFEUR -->
+<div class="role-chapter" data-chapter="Coiffeur" data-num="10">
+  <div class="chapter-bg-num">10</div>
+  <div class="role-inner reverse">
+    <div class="role-text">
+      <span class="role-num">RÔLE 10 / 11</span><span class="role-tag">Gardien du naturel — L'art de l'invisibilité</span>
+      <h2 class="role-title">Le Coiffeur</h2>
+      <p class="role-desc">Sa particularité au cinéma : son travail ne doit pas se voir. Les coiffures doivent rester les plus naturelles possibles — et surtout stables d'une prise à l'autre, même à des jours d'intervalle.</p>
+      <ul class="role-duties">
+        <li><span class="duty-bullet"></span>Coiffer les acteurs selon leur personnage et l'époque</li>
+        <li><span class="duty-bullet"></span>Garantir la continuité capillaire entre les scènes</li>
+        <li><span class="duty-bullet"></span>Gérer perruques et postiches pour les transformations</li>
+        <li><span class="duty-bullet"></span>Travailler en synergie avec le maquilleur</li>
+      </ul>
+      <div class="example-block"><span class="example-label">Exemple Titanic</span><p class="example-text">Les cheveux mouillés de Rose sur le radeau doivent être exactement les mêmes sur toutes les prises. Le coiffeur est l'ennemi de la continuité brisée.</p></div>
+    </div>
+    <div class="role-visual">
+      <div class="video-block" data-loaded="false">
+        <div class="video-embed-wrapper">
+          <iframe class="video-embed" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+        </div>
+        <div class="video-placeholder">
+          <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="video-caption">
+            <span class="video-caption-main">Insérer une vidéo YouTube</span>
+            <span class="video-caption-sub">Ex : Coiffure plateau / coulisses beauté cinéma</span>
+          </div>
+        </div>
+        <div class="video-footer">
+          <span class="video-footer-label">Lien YouTube</span>
+          <input type="text" class="video-footer-input" placeholder="https://www.youtube.com/watch?v=... ou shorts/...">
+          <button class="photo-upload-btn" style="flex-shrink:0" onclick="loadVideo(this)">Charger</button>
+        </div>
+      </div>
+      <div class="photo-gallery">
+        <div class="photo-gallery-header">
+          <span class="photo-gallery-label">Photos · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+        </div>
+        <div class="photo-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="role-sep"><div class="role-sep-inner"></div></div>
+
+<!-- 11 CATERING -->
+<div class="role-chapter" data-chapter="Responsable Catering" data-num="11">
+  <div class="chapter-bg-num">11</div>
+  <div class="role-inner">
+    <div class="role-text">
+      <span class="role-num">RÔLE 11 / 11</span><span class="role-tag">Le nourricier — Carburant humain du tournage</span>
+      <h2 class="role-title">Le Responsable Catering</h2>
+      <p class="role-desc">En anglais, « catering » signifie restauration. Il nourrit toute l'équipe — acteurs et techniciens — du petit-déjeuner jusqu'à la fin des tournages nocturnes. Un équipage qui a faim ne fait pas de bon film.</p>
+      <ul class="role-duties">
+        <li><span class="duty-bullet"></span>Planifier et fournir les repas pour toute l'équipe</li>
+        <li><span class="duty-bullet"></span>Être présent dès l'aube pour le petit-déjeuner</li>
+        <li><span class="duty-bullet"></span>Adapter les menus aux contraintes du tournage</li>
+        <li><span class="duty-bullet"></span>Travailler parfois très tard dans la nuit</li>
+      </ul>
+      <div class="example-block"><span class="example-label">Exemple Titanic</span><p class="example-text">Nourrir 1 200 personnes par jour pendant 6 mois en conditions extrêmes était un défi logistique colossal. Le catering travaillait la nuit pour que le petit-déjeuner soit prêt à l'aube.</p></div>
+    </div>
+    <div class="role-visual">
+      <div class="video-block" data-loaded="false">
+        <div class="video-embed-wrapper">
+          <iframe class="video-embed" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+        </div>
+        <div class="video-placeholder">
+          <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="video-caption">
+            <span class="video-caption-main">Insérer une vidéo YouTube</span>
+            <span class="video-caption-sub">Ex : Catering sur tournage / cuisine de plateau</span>
+          </div>
+        </div>
+        <div class="video-footer">
+          <span class="video-footer-label">Lien YouTube</span>
+          <input type="text" class="video-footer-input" placeholder="https://www.youtube.com/watch?v=... ou shorts/...">
+          <button class="photo-upload-btn" style="flex-shrink:0" onclick="loadVideo(this)">Charger</button>
+        </div>
+      </div>
+      <div class="photo-gallery">
+        <div class="photo-gallery-header">
+          <span class="photo-gallery-label">Photos · coulisses</span>
+          <label class="photo-upload-btn">+ Ajouter des photos<input type="file" accept="image/*" multiple style="display:none" onchange="addPhotos(this)"></label>
+        </div>
+        <div class="photo-grid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /roles-container -->
+
+<!-- ═══ CONCLUSION ═══ -->
+<section class="conclusion" id="conclusion">
+  <div class="conclusion-stars"></div>
+  <div class="conclusion-glow"></div>
+  <div class="conclusion-content">
+    <span class="eyebrow">⚓ Épilogue · La leçon du naufrage</span>
+    <div class="conclusion-divider">
+      <div class="conclusion-divider-line"></div>
+      <div class="conclusion-divider-dot"></div>
+      <div class="conclusion-divider-dot" style="opacity:0.5;margin:0 0.3rem"></div>
+      <div class="conclusion-divider-dot"></div>
+      <div class="conclusion-divider-line"></div>
+    </div>
+    <blockquote class="conclusion-quote">"Un film n'est pas l'œuvre d'un génie solitaire.<br>C'est la symphonie d'un équipage entier."</blockquote>
+    <div class="conclusion-attr">— La leçon du cinéma · et du Titanic</div>
+    <p class="conclusion-body">Le Titanic — le vrai — a sombré en partie à cause d'erreurs de coordination : un iceberg signalé ignoré, des ordres mal communiqués, des chaloupes mal remplies. Le film de Cameron, lui, est une réussite totale — parce que chaque rôle a été respecté, chaque expertise valorisée, chaque responsabilité assumée.</p>
+    <p class="conclusion-body">Du scénariste qui a posé les premiers mots sur papier, au responsable catering qui a nourri l'équipe à 3h du matin — ce sont ces <strong style="color:var(--gold-light)">11 rôles</strong>, et des centaines d'autres, qui ont rendu l'impossible possible : ressusciter le Titanic pour l'éternité.</p>
+    <div class="conclusion-final">Un film réussi = une coordination parfaite.</div>
+    <div class="conclusion-anchor">⚓</div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand">⚓ Dans les Coulisses d'un Chef-d'Œuvre</div>
+  <div class="footer-info">Les Métiers du Tournage · Titanic (1997) · James Cameron</div>
+</footer>
+
+<!-- VIDEO MODAL -->
+<div id="video-modal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(1,8,16,0.97);align-items:center;justify-content:center;flex-direction:column;gap:1.5rem;" onclick="if(event.target===this)closeVideoModal()">
+  <div style="position:relative;width:min(900px,92vw);">
+    <div style="aspect-ratio:16/9;background:#000;border:1px solid rgba(201,168,76,0.2);border-radius:6px;overflow:hidden;box-shadow:0 0 100px rgba(0,0,0,0.9);position:relative;">
+      <div id="yt-player-container" style="width:100%;height:100%;"></div>
+      <div id="video-modal-fallback" style="display:none;position:absolute;inset:0;background:linear-gradient(150deg,rgba(11,61,145,0.3),rgba(3,13,31,0.98));flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;text-align:center;padding:2rem;">
+        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;font-style:italic;">Cette vidéo ne peut pas être lue ici.</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:0.9rem;color:rgba(245,240,232,0.5);">Son propriétaire a désactivé la lecture intégrée.</div>
+        <a href="" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:0.7rem;padding:0.9rem 2.5rem;border:1px solid rgba(201,168,76,0.5);color:var(--gold);font-family:'Montserrat',sans-serif;font-size:0.55rem;letter-spacing:0.3em;text-transform:uppercase;text-decoration:none;transition:all 0.3s;background:rgba(201,168,76,0.06);" onmouseover="this.style.background='rgba(201,168,76,0.15)'" onmouseout="this.style.background='rgba(201,168,76,0.06)'">
+          <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg>
+          Ouvrir sur YouTube
+        </a>
+        <div style="font-family:'Montserrat',sans-serif;font-size:0.45rem;letter-spacing:0.2em;color:rgba(245,240,232,0.2);text-transform:uppercase;">Choisissez une vidéo différente pour éviter ce problème</div>
+      </div>
+    </div>
+    <button onclick="closeVideoModal()" style="position:absolute;top:-1rem;right:-1rem;width:36px;height:36px;border-radius:50%;background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);color:var(--gold);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.3s;" onmouseover="this.style.background='rgba(201,168,76,0.3)'" onmouseout="this.style.background='rgba(201,168,76,0.15)'">✕</button>
+  </div>
+  <span style="font-family:'Montserrat',sans-serif;font-size:0.48rem;letter-spacing:0.35em;text-transform:uppercase;color:rgba(201,168,76,0.35);">Cliquer en dehors ou ✕ pour fermer</span>
+</div>
+
+<script>
+/* CURSOR */
+const cursor=document.getElementById('cursor');
+const cursorRing=document.getElementById('cursorRing');
+let mx=-100,my=-100,rx=-100,ry=-100;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px'});
+(function animCursor(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;cursorRing.style.left=rx+'px';cursorRing.style.top=ry+'px';requestAnimationFrame(animCursor)})();
+document.querySelectorAll('a,button,.video-placeholder,.manifest-item').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cursorRing.style.width='56px';cursorRing.style.height='56px';cursorRing.style.borderColor='rgba(201,168,76,0.8)'});
+  el.addEventListener('mouseleave',()=>{cursorRing.style.width='32px';cursorRing.style.height='32px';cursorRing.style.borderColor='rgba(201,168,76,0.5)'});
+});
+
+/* PROGRESS */
+window.addEventListener('scroll',()=>{const s=document.documentElement.scrollTop;const h=document.documentElement.scrollHeight-document.documentElement.clientHeight;document.getElementById('progress-bar').style.width=(s/h*100)+'%'},{passive:true});
+
+/* NAV SCROLL */
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>60)},{passive:true});
+
+/* CHAPTER REVEALS */
+const chapters=document.querySelectorAll('.role-chapter');
+const navChapter=document.getElementById('nav-chapter');
+const revealObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      const ch=e.target.dataset.chapter;
+      const num=e.target.dataset.num;
+      if(ch)navChapter.textContent=num+' / 11 — '+ch;
+    }
+  });
+},{threshold:0.1,rootMargin:'0px 0px -80px 0px'});
+chapters.forEach(c=>revealObs.observe(c));
+
+/* HERO PARALLAX */
+const heroStars=document.querySelector('.hero-layer-stars');
+const heroOcean=document.querySelector('.hero-ocean-floor');
+window.addEventListener('scroll',()=>{
+  const y=window.scrollY;
+  if(y<window.innerHeight){
+    if(heroStars)heroStars.style.transform='translateY('+(y*0.15)+'px)';
+    if(heroOcean)heroOcean.style.transform='translateY('+(y*0.3)+'px)';
+  }
+},{passive:true});
+
+/* MANIFEST STAGGER */
+const manifestItems=document.querySelectorAll('.manifest-item');
+manifestItems.forEach(i=>{i.style.opacity='0';i.style.transform='translateY(20px)'});
+const manifestObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      manifestItems.forEach((item,i)=>{
+        setTimeout(()=>{
+          item.style.transition='opacity 0.6s ease,transform 0.6s ease';
+          item.style.opacity='1';
+          item.style.transform='translateY(0)';
+        },i*55+100);
+      });
+      manifestObs.disconnect();
+    }
+  });
+},{threshold:0.2});
+if(manifestItems[0])manifestObs.observe(manifestItems[0]);
+
+/* SMOOTH ANCHORS */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'})}
+  });
+});
+
+/* ── VIDEO PLAYER ── */
+function getYouTubeId(url){
+  url=url.trim();
+  let m=url.match(/shorts\/([A-Za-z0-9_-]{11})/); if(m)return m[1];
+  m=url.match(/[?&]v=([A-Za-z0-9_-]{11})/); if(m)return m[1];
+  m=url.match(/youtu\.be\/([A-Za-z0-9_-]{11})/); if(m)return m[1];
+  m=url.match(/embed\/([A-Za-z0-9_-]{11})/); if(m)return m[1];
+  return null;
+}
+
+function loadVideo(btn){
+  const block=btn.closest('.video-block');
+  const input=block.querySelector('.video-footer-input');
+  const id=getYouTubeId(input.value);
+  if(!id){
+    input.style.borderColor='rgba(255,80,80,0.6)';
+    input.placeholder='Lien invalide — réessayez';
+    setTimeout(()=>{input.style.borderColor='';input.placeholder='https://www.youtube.com/watch?v=...';},2500);
+    return;
+  }
+  showVideoInModal(id);
+}
+
+/* Load YouTube IFrame API once */
+let ytApiReady=false;
+let ytPlayer=null;
+let pendingId=null;
+
+function loadYTApi(){
+  if(document.getElementById('yt-api-script')) return;
+  const s=document.createElement('script');
+  s.id='yt-api-script';
+  s.src='https://www.youtube.com/iframe_api';
+  document.head.appendChild(s);
+}
+
+window.onYouTubeIframeAPIReady=function(){
+  ytApiReady=true;
+  if(pendingId) _createPlayer(pendingId);
+};
+
+function _createPlayer(id){
+  const fallback=document.getElementById('video-modal-fallback');
+  const container=document.getElementById('yt-player-container');
+  container.innerHTML=''; // clear previous
+  fallback.style.display='none';
+  container.style.display='block';
+
+  ytPlayer=new YT.Player('yt-player-container',{
+    videoId:id,
+    playerVars:{autoplay:1,rel:0,modestbranding:1},
+    events:{
+      onError:function(e){
+        // 100,101,150,153 = embed blocked
+        container.style.display='none';
+        fallback.querySelector('a').href=`https://www.youtube.com/watch?v=${id}`;
+        fallback.style.display='flex';
+      }
+    }
+  });
+}
+
+function showVideoInModal(id){
+  const modal=document.getElementById('video-modal');
+  modal.dataset.currentId=id;
+  modal.style.display='flex';
+  document.body.style.overflow='hidden';
+
+  const fallback=document.getElementById('video-modal-fallback');
+  const container=document.getElementById('yt-player-container');
+  fallback.style.display='none';
+  container.style.display='block';
+  container.innerHTML='';
+
+  if(ytApiReady){
+    _createPlayer(id);
+  } else {
+    pendingId=id;
+    loadYTApi();
+  }
+}
+
+function closeVideoModal(){
+  const modal=document.getElementById('video-modal');
+  if(ytPlayer && typeof ytPlayer.destroy==='function'){
+    ytPlayer.destroy();
+    ytPlayer=null;
+  }
+  document.getElementById('yt-player-container').innerHTML='';
+  modal.style.display='none';
+  document.body.style.overflow='';
+}
+
+// After loadVideo, also update the block to show thumbnail + "Voir la vidéo" button
+function loadVideo(btn){
+  const block=btn.closest('.video-block');
+  const input=block.querySelector('.video-footer-input');
+  const id=getYouTubeId(input.value);
+  if(!id){
+    input.style.borderColor='rgba(255,80,80,0.6)';
+    input.placeholder='Lien invalide — réessayez';
+    setTimeout(()=>{input.style.borderColor='';input.placeholder='https://www.youtube.com/watch?v=...';},2500);
+    return;
+  }
+  const thumb=`https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+  const wrapper=block.querySelector('.video-embed-wrapper');
+  wrapper.innerHTML=`
+    <div style="position:relative;aspect-ratio:16/9;cursor:pointer;overflow:hidden;border-radius:4px 4px 0 0;" onclick="showVideoInModal('${id}')">
+      <img src="${thumb}" style="width:100%;height:100%;object-fit:cover;display:block;transition:filter 0.4s;">
+      <div style="position:absolute;inset:0;background:rgba(1,8,16,0.35);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;transition:background 0.3s;" onmouseover="this.style.background='rgba(1,8,16,0.55)'" onmouseout="this.style.background='rgba(1,8,16,0.35)'">
+        <div style="width:72px;height:72px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;box-shadow:0 0 40px rgba(201,168,76,0.5);transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+          <svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:#030d1f;margin-left:4px"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <span style="font-family:'Montserrat',sans-serif;font-size:0.52rem;letter-spacing:0.35em;text-transform:uppercase;color:rgba(245,240,232,0.9);">Lire la vidéo</span>
+      </div>
+    </div>`;
+  wrapper.style.display='block';
+  block.querySelector('.video-placeholder').style.display='none';
+  block.querySelector('.video-footer').innerHTML=`
+    <span style="font-family:'Montserrat',sans-serif;font-size:0.48rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(201,168,76,0.4);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">youtube · ${id}</span>
+    <button class="photo-upload-btn" onclick="resetVideo(this)">Changer</button>`;
+}
+
+function resetVideo(btn){
+  const block=btn.closest('.video-block');
+  const wrapper=block.querySelector('.video-embed-wrapper');
+  wrapper.style.display='none';
+  wrapper.innerHTML='';
+  block.querySelector('.video-placeholder').style.display='flex';
+  block.querySelector('.video-footer').innerHTML=`<span class="video-footer-label">Lien YouTube</span><input type="text" class="video-footer-input" placeholder="https://www.youtube.com/watch?v=..."><button class="photo-upload-btn" style="flex-shrink:0" onclick="loadVideo(this)">Charger</button>`;
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') closeVideoModal();
+  if(e.key==='Enter'&&e.target.classList.contains('video-footer-input')){
+    const btn=e.target.closest('.video-footer').querySelector('button');
+    if(btn) loadVideo(btn);
+  }
+});
+
+/* ── PHOTO GALLERY ── */
+function addPhotos(input){
+  const grid = input.closest('.photo-gallery').querySelector('.photo-grid');
+  Array.from(input.files).forEach(file=>{
+    const reader = new FileReader();
+    reader.onload = e=>{
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.className = 'photo-thumb';
+      img.title = 'Cliquer pour agrandir';
+      img.addEventListener('click', ()=>openLightbox(e.target.result));
+      grid.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value=''; // reset so same file can be re-added
+}
+
+/* ── LIGHTBOX ── */
+const lb = document.createElement('div');
+lb.className='lightbox';
+lb.innerHTML='<span class="lightbox-close">✕ Fermer</span><img>';
+document.body.appendChild(lb);
+lb.addEventListener('click', ()=>lb.classList.remove('open'));
+
+function openLightbox(src){
+  lb.querySelector('img').src=src;
+  lb.classList.add('open');
+}
+</script>
+</body>
+</html>
